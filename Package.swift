@@ -16,7 +16,7 @@ let package = Package(
         // MARK: - Coproduct derivation core (model, fold emitter, prism emitter)
         .library(
             name: "Coproduct Derivation",
-            targets: ["CoproductDerivation"]
+            targets: ["CoproductDerivation", "Coproduct Derivation"]
         ),
         .library(
             name: "Coproduct Derivation Macros",
@@ -31,6 +31,22 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-syntax.git", "602.0.0"..<"603.0.0"),
     ],
     targets: [
+        // MARK: - Namespace and attached-macro front (per [MOD-017])
+        // The @Coproduct declaration lives here rather than in
+        // CoproductDerivation because a target that declares an external macro
+        // must depend on the compiler plugin that implements it, and
+        // CoproductDerivationMacros already depends on CoproductDerivation —
+        // putting the declaration in the core would close a dependency cycle.
+        // This target is part of the "Coproduct Derivation" library product,
+        // so a consumer of that product receives both the derivation core and
+        // a writable @Coproduct.
+        .target(
+            name: "Coproduct Derivation",
+            dependencies: [
+                "CoproductDerivation",
+                "CoproductDerivationMacros",
+            ]
+        ),
         // MARK: - Coproduct derivation core (syntax-free, Foundation-free)
         // TX-D2 owns the semantic content: the nominal coproduct model over
         // the shared declaration IR, the exhaustive fold emitter and the
@@ -55,6 +71,20 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+            ]
+        ),
+        // MARK: - Consumer-integration control (product surface only)
+        // This target depends on nothing but the targets behind the "Coproduct
+        // Derivation" library product — no macro-implementation target — so it
+        // compiles against exactly what an external consumer receives. A test
+        // target that also depends on CoproductDerivationMacros, or one that
+        // supplies the macro mapping itself through `macroSpecs:`, cannot
+        // detect an undeclared or unresolvable attribute.
+        .testTarget(
+            name: "Coproduct Derivation Consumer Tests",
+            dependencies: [
+                "CoproductDerivation",
+                "Coproduct Derivation",
             ]
         ),
         .testTarget(
