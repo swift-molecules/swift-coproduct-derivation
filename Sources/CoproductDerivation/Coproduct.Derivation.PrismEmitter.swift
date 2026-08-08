@@ -29,7 +29,7 @@ extension Coproduct.Derivation.PrismEmitter {
     model.cases.map { alternative in
       if let payload = alternative.payloadTypeReference {
         return """
-          public var \(alternative.name.text)Prism: \(payload.text)? {
+          public var \(alternative.name.text)Prism: (\(payload.text))? {
               guard case .\(alternative.name.text)(let value) = self else {
                   return nil
               }

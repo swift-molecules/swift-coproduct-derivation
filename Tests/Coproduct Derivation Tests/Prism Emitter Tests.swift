@@ -26,7 +26,7 @@ extension Coproduct.Derivation.PrismEmitter {
       )
       let prisms = emitter.memberDeclarations(for: model)
       let retry = try #require(prisms.last)
-      #expect(retry.contains("public var retryPrism: Int? {"))
+      #expect(retry.contains("public var retryPrism: (Int)? {"))
       #expect(retry.contains("guard case .retry(let value) = self else {"))
       #expect(retry.contains("return value"))
     }

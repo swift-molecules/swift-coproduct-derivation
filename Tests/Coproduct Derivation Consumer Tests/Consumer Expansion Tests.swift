@@ -30,6 +30,12 @@ private enum Request {
   case failed(String)
 }
 
+@Coproduct(prisms: true)
+private enum Callback {
+  case callback(@Sendable () -> Void)
+  case idle
+}
+
 private let expectedProvenance =
   "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
 
@@ -63,6 +69,21 @@ extension Coproduct {
       #expect(request.failedPrism == "offline")
     }
 
+    /// A consumer receives the function payload as an optional whole type,
+    /// rather than as a nonoptional function returning an optional result.
+    @Test func `function payload prism extracts the matching case only`() {
+      let callback: @Sendable () -> Void = {}
+      let value = Callback.callback(callback)
+      guard let extracted = value.callbackPrism else {
+        Issue.record("the matching callback case must extract its payload")
+        return
+      }
+      extracted()
+      if Callback.idle.callbackPrism != nil {
+        Issue.record("a nonmatching callback case must not extract a payload")
+      }
+    }
+
     /// Expansion without the argument derives no prisms; `Direction` has
     /// a fold and provenance only.
     @Test func `prisms are absent without the argument`() {
@@ -74,6 +95,7 @@ extension Coproduct {
       #expect(Direction.coproductDerivationProvenance == expectedProvenance)
       #expect(Signal.coproductDerivationProvenance == expectedProvenance)
       #expect(Request.coproductDerivationProvenance == expectedProvenance)
+      #expect(Callback.coproductDerivationProvenance == expectedProvenance)
     }
   }
 }

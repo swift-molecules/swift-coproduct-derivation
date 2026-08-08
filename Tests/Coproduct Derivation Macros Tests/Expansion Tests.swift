@@ -176,11 +176,56 @@ private let payloadFixtureExpansion = """
           "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
       }
 
-      public var failedPrism: String? {
+      public var failedPrism: (String)? {
           guard case .failed(let value) = self else {
               return nil
           }
           return value
+      }
+  }
+  """
+
+private let functionPayloadFixture = """
+  @Coproduct(prisms: true)
+  enum Callback {
+      case callback(@Sendable () -> Void)
+      case idle
+  }
+  """
+
+private let functionPayloadFixtureExpansion = """
+  enum Callback {
+      case callback(@Sendable () -> Void)
+      case idle
+
+      public func fold<Result>(
+          callback: (@Sendable () -> Void) -> Result,
+          idle: () -> Result
+      ) -> Result {
+          switch self {
+          case .callback(let value):
+              callback(value)
+          case .idle:
+              idle()
+          }
+      }
+
+      public static var coproductDerivationProvenance: String {
+          "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+      }
+
+      public var callbackPrism: (@Sendable () -> Void)? {
+          guard case .callback(let value) = self else {
+              return nil
+          }
+          return value
+      }
+
+      public var idlePrism: Void? {
+          guard case .idle = self else {
+              return nil
+          }
+          return ()
       }
   }
   """
@@ -202,6 +247,10 @@ extension Coproduct.Macro {
         expectMacroExpansion(zeroCaseFixture, expandedSource: zeroCaseFixtureExpansion)
         expectMacroExpansion(prismFixture, expandedSource: prismFixtureExpansion)
         expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
+        expectMacroExpansion(
+          functionPayloadFixture,
+          expandedSource: functionPayloadFixtureExpansion
+        )
       }
     }
 
@@ -209,6 +258,15 @@ extension Coproduct.Macro {
     /// pass that exact value through both generated payload-bearing members.
     @Test func `associated value is bound by fold and prism expansions`() {
       expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
+    }
+
+    /// Precedence regression: the prism optionalizes the complete function
+    /// payload type, preserving its attribute and return type.
+    @Test func `function payload prism groups the complete payload type`() {
+      expectMacroExpansion(
+        functionPayloadFixture,
+        expandedSource: functionPayloadFixtureExpansion
+      )
     }
 
     /// Near-miss control: without `prisms: true` the expansion contains no
