@@ -48,8 +48,8 @@ extension Coproduct.Derivation.Emitter {
         #expect(fold.contains("case .retry:"))
     }
 
-    @Test func `payload case folds with its payload`() {
-        let model = try! Coproduct.Derivation.Model(
+    @Test func `payload case folds with its payload`() throws {
+        let model = try Coproduct.Derivation.Model(
             Declaration.IR(node: FixtureCorpus.payloadModelNode)
         )
         let members = emitter.memberDeclarations(for: model)
