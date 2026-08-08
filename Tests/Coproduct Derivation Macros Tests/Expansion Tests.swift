@@ -152,6 +152,39 @@ private let prismFixtureExpansion = """
     }
     """
 
+private let payloadFixture = """
+    @Coproduct(prisms: true)
+    enum Request {
+        case failed(String)
+    }
+    """
+
+private let payloadFixtureExpansion = """
+    enum Request {
+        case failed(String)
+
+        public func fold<Result>(
+            failed: (String) -> Result
+        ) -> Result {
+            switch self {
+            case .failed(let value):
+                failed(value)
+            }
+        }
+
+        public static var coproductDerivationProvenance: String {
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+        }
+
+        public var failedPrism: String? {
+            guard case .failed(let value) = self else {
+                return nil
+            }
+            return value
+        }
+    }
+    """
+
 private let structureFixture = """
     @Coproduct
     struct Point {
@@ -168,7 +201,14 @@ extension Coproduct.Macro {
             expectMacroExpansion(enumerationFixture, expandedSource: enumerationFixtureExpansion)
             expectMacroExpansion(zeroCaseFixture, expandedSource: zeroCaseFixtureExpansion)
             expectMacroExpansion(prismFixture, expandedSource: prismFixtureExpansion)
+            expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
         }
+    }
+
+    /// Binding regression: the expansion must bind an associated value and
+    /// pass that exact value through both generated payload-bearing members.
+    @Test func `associated value is bound by fold and prism expansions`() {
+        expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
     }
 
     /// Near-miss control: without `prisms: true` the expansion contains no

@@ -13,13 +13,6 @@ import Testing
 // mapping itself through `macroSpecs:` — cannot detect an undeclared or
 // unresolvable @Coproduct.
 //
-// The fixtures are payload-free because the delivered
-// `Declaration.SwiftSyntaxAdapter` records no payload type reference for an
-// enumeration case, so `Coproduct.Derivation.Model` sees every alternative as
-// payload-free and both emitters render the payload-free shape. That is a
-// TX-D2 semantic gap, not a usability one; this control asserts the behaviour
-// that actually ships.
-
 @Coproduct
 private enum Direction {
     case north
@@ -30,6 +23,11 @@ private enum Direction {
 private enum Signal {
     case ready
     case failed
+}
+
+@Coproduct(prisms: true)
+private enum Request {
+    case failed(String)
 }
 
 private let expectedProvenance =
@@ -57,6 +55,14 @@ extension Coproduct {
             #expect(Signal.ready.readyPrism != nil)
         }
 
+        /// Binding regression: generated payload-bearing members receive the
+        /// exact associated value supplied by the consumer.
+        @Test func `fold and prism preserve an associated value`() {
+            let request = Request.failed("offline")
+            #expect(request.fold(failed: { $0 }) == "offline")
+            #expect(request.failedPrism == "offline")
+        }
+
         /// Expansion without the argument derives no prisms; `Direction` has
         /// a fold and provenance only.
         @Test func `prisms are absent without the argument`() {
@@ -67,6 +73,7 @@ extension Coproduct {
         @Test func `expansions carry provenance`() {
             #expect(Direction.coproductDerivationProvenance == expectedProvenance)
             #expect(Signal.coproductDerivationProvenance == expectedProvenance)
+            #expect(Request.coproductDerivationProvenance == expectedProvenance)
         }
     }
 }

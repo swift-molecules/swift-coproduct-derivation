@@ -37,8 +37,9 @@ extension Coproduct.Macro {
             in context: some MacroExpansionContext
         ) throws(Declaration.Derivation.Diagnostic) -> [DeclSyntax] {
             let adapter = Declaration.SwiftSyntaxAdapter()
-            let intermediateRepresentation = try adapter.intermediateRepresentation(
-                from: declaration
+            let intermediateRepresentation = try normalize(
+                declaration,
+                using: adapter
             )
             let analyzed = try Declaration.Derivation.Analyzer().analyze(
                 intermediateRepresentation
@@ -54,6 +55,73 @@ extension Coproduct.Macro {
             return members.map { member in
                 DeclSyntax("\(raw: member)")
             }
+        }
+
+        /// Enriches the shared declaration IR with the single associated
+        /// value the coproduct model and emitters support.
+        ///
+        /// The shared SwiftSyntax adapter currently normalizes every enum
+        /// case as payload-free. Rebuilding only enumeration members here
+        /// keeps the workaround inside the macro boundary that has syntax
+        /// access, while all downstream analysis and emission continue to
+        /// consume the existing syntax-independent IR.
+        private static func normalize(
+            _ declaration: some DeclGroupSyntax,
+            using adapter: Declaration.SwiftSyntaxAdapter
+        ) throws(Declaration.Derivation.Diagnostic) -> Declaration.IR {
+            let intermediateRepresentation = try adapter.intermediateRepresentation(
+                from: declaration
+            )
+            guard let enumeration = declaration.as(EnumDeclSyntax.self) else {
+                return intermediateRepresentation
+            }
+
+            var members: [Declaration.Node.Member] = []
+            for item in enumeration.memberBlock.members {
+                guard let enumerationCase = item.decl.as(EnumCaseDeclSyntax.self) else {
+                    continue
+                }
+                for element in enumerationCase.elements {
+                    guard let parameters = element.parameterClause?.parameters,
+                        !parameters.isEmpty
+                    else {
+                        members.append(
+                            Declaration.Node.Member(
+                                name: Declaration.Node.Name(element.name.trimmedDescription)
+                            )
+                        )
+                        continue
+                    }
+                    guard parameters.count == 1, let parameter = parameters.first else {
+                        throw Declaration.Derivation.Diagnostic(
+                            code: .malformedDeclaration,
+                            subject: intermediateRepresentation.node.name,
+                            detail: "coproduct derivation supports one associated value per case"
+                        )
+                    }
+                    members.append(
+                        Declaration.Node.Member(
+                            name: Declaration.Node.Name(element.name.trimmedDescription),
+                            typeReference: Declaration.Node.Member.TypeReference(
+                                parameter.type.trimmedDescription
+                            ),
+                            label: parameter.firstName.map {
+                                Declaration.Node.Member.Label($0.trimmedDescription)
+                            },
+                            defaultValue: parameter.defaultValue.map {
+                                Declaration.Node.Member.DefaultValue($0.value.trimmedDescription)
+                            }
+                        )
+                    )
+                }
+            }
+            return Declaration.IR(
+                node: Declaration.Node(
+                    kind: .enumeration,
+                    name: intermediateRepresentation.node.name,
+                    members: members
+                )
+            )
         }
 
         /// Whether the attribute opts in to prism emission with
