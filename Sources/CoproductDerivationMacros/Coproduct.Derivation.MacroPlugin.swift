@@ -13,7 +13,7 @@ import SwiftSyntaxMacros
 /// `Coproduct.Macro` front and implements the `@Coproduct` attached macro.
 @main
 struct CoproductDerivationMacroPlugin: CompilerPlugin {
-    let providingMacros: [Macro.Type] = [
-        CoproductMacro.self
-    ]
+  let providingMacros: [Macro.Type] = [
+    CoproductMacro.self
+  ]
 }

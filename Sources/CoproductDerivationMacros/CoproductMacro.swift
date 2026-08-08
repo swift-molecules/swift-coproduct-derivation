@@ -20,17 +20,17 @@ public struct CoproductMacro: MemberMacro {
 }
 
 extension CoproductMacro {
-    public static func expansion(
-        of node: AttributeSyntax,
-        providingMembersOf declaration: some DeclGroupSyntax,
-        conformingTo protocols: [TypeSyntax],
-        in context: some MacroExpansionContext
-    ) throws(Declaration.Derivation.Diagnostic) -> [DeclSyntax] {
-        try Coproduct.Macro.expansion(
-            of: node,
-            providingMembersOf: declaration,
-            conformingTo: protocols,
-            in: context
-        )
-    }
+  public static func expansion(
+    of node: AttributeSyntax,
+    providingMembersOf declaration: some DeclGroupSyntax,
+    conformingTo protocols: [TypeSyntax],
+    in context: some MacroExpansionContext
+  ) throws(Declaration.Derivation.Diagnostic) -> [DeclSyntax] {
+    try Coproduct.Macro.expansion(
+      of: node,
+      providingMembersOf: declaration,
+      conformingTo: protocols,
+      in: context
+    )
+  }
 }
