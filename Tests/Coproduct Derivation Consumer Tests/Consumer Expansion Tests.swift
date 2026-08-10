@@ -15,87 +15,87 @@ import Testing
 //
 @Coproduct
 private enum Direction {
-  case north
-  case south
+    case north
+    case south
 }
 
 @Coproduct(prisms: true)
 private enum Signal {
-  case ready
-  case failed
+    case ready
+    case failed
 }
 
 @Coproduct(prisms: true)
 private enum Request {
-  case failed(String)
+    case failed(String)
 }
 
 @Coproduct(prisms: true)
 private enum Callback {
-  case callback(@Sendable () -> Void)
-  case idle
+    case callback(@Sendable () -> Void)
+    case idle
 }
 
 private let expectedProvenance =
-  "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+    "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
 
 extension Coproduct {
-  @Suite struct Test {
+    @Suite struct Test {
 
-    /// The attribute is writable by a consumer of the library product
-    /// alone, and derives the exhaustive fold over the alternatives.
-    @Test func `enumeration derives an exhaustive fold`() {
-      #expect(
-        Direction.north.fold(north: { "north" }, south: { "south" }) == "north"
-      )
-      #expect(
-        Direction.south.fold(north: { "north" }, south: { "south" }) == "south"
-      )
-    }
+        /// The attribute is writable by a consumer of the library product
+        /// alone, and derives the exhaustive fold over the alternatives.
+        @Test func `enumeration derives an exhaustive fold`() {
+            #expect(
+                Direction.north.fold(north: { "north" }, south: { "south" }) == "north"
+            )
+            #expect(
+                Direction.south.fold(north: { "north" }, south: { "south" }) == "south"
+            )
+        }
 
-    /// Prism emission is opt-in through the attribute's argument, and
-    /// projects exactly the matching alternative.
-    @Test func `prism emission is opt in`() {
-      #expect(Signal.failed.failedPrism != nil)
-      #expect(Signal.failed.readyPrism == nil)
-      #expect(Signal.ready.readyPrism != nil)
-    }
+        /// Prism emission is opt-in through the attribute's argument, and
+        /// projects exactly the matching alternative.
+        @Test func `prism emission is opt in`() {
+            #expect(Signal.failed.failedPrism != nil)
+            #expect(Signal.failed.readyPrism == nil)
+            #expect(Signal.ready.readyPrism != nil)
+        }
 
-    /// Binding regression: generated payload-bearing members receive the
-    /// exact associated value supplied by the consumer.
-    @Test func `fold and prism preserve an associated value`() {
-      let request = Request.failed("offline")
-      #expect(request.fold(failed: { $0 }) == "offline")
-      #expect(request.failedPrism == "offline")
-    }
+        /// Binding regression: generated payload-bearing members receive the
+        /// exact associated value supplied by the consumer.
+        @Test func `fold and prism preserve an associated value`() {
+            let request = Request.failed("offline")
+            #expect(request.fold(failed: { $0 }) == "offline")
+            #expect(request.failedPrism == "offline")
+        }
 
-    /// A consumer receives the function payload as an optional whole type,
-    /// rather than as a nonoptional function returning an optional result.
-    @Test func `function payload prism extracts the matching case only`() {
-      let callback: @Sendable () -> Void = {}
-      let value = Callback.callback(callback)
-      guard let extracted = value.callbackPrism else {
-        Issue.record("the matching callback case must extract its payload")
-        return
-      }
-      extracted()
-      if Callback.idle.callbackPrism != nil {
-        Issue.record("a nonmatching callback case must not extract a payload")
-      }
-    }
+        /// A consumer receives the function payload as an optional whole type,
+        /// rather than as a nonoptional function returning an optional result.
+        @Test func `function payload prism extracts the matching case only`() {
+            let callback: @Sendable () -> Void = {}
+            let value = Callback.callback(callback)
+            guard let extracted = value.callbackPrism else {
+                Issue.record("the matching callback case must extract its payload")
+                return
+            }
+            extracted()
+            if Callback.idle.callbackPrism != nil {
+                Issue.record("a nonmatching callback case must not extract a payload")
+            }
+        }
 
-    /// Expansion without the argument derives no prisms; `Direction` has
-    /// a fold and provenance only.
-    @Test func `prisms are absent without the argument`() {
-      #expect(Direction.coproductDerivationProvenance == expectedProvenance)
-    }
+        /// Expansion without the argument derives no prisms; `Direction` has
+        /// a fold and provenance only.
+        @Test func `prisms are absent without the argument`() {
+            #expect(Direction.coproductDerivationProvenance == expectedProvenance)
+        }
 
-    /// Every expansion carries the generation contract's provenance.
-    @Test func `expansions carry provenance`() {
-      #expect(Direction.coproductDerivationProvenance == expectedProvenance)
-      #expect(Signal.coproductDerivationProvenance == expectedProvenance)
-      #expect(Request.coproductDerivationProvenance == expectedProvenance)
-      #expect(Callback.coproductDerivationProvenance == expectedProvenance)
+        /// Every expansion carries the generation contract's provenance.
+        @Test func `expansions carry provenance`() {
+            #expect(Direction.coproductDerivationProvenance == expectedProvenance)
+            #expect(Signal.coproductDerivationProvenance == expectedProvenance)
+            #expect(Request.coproductDerivationProvenance == expectedProvenance)
+            #expect(Callback.coproductDerivationProvenance == expectedProvenance)
+        }
     }
-  }
 }

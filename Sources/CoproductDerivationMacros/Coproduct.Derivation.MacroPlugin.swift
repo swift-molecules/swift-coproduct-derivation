@@ -1,7 +1,7 @@
 // Coproduct.Derivation.MacroPlugin.swift
 
 import CoproductDerivation
-import DeclarationDerivationModel
+import Declaration_Derivation_Model
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
@@ -13,7 +13,7 @@ import SwiftSyntaxMacros
 /// `Coproduct.Macro` front and implements the `@Coproduct` attached macro.
 @main
 struct CoproductDerivationMacroPlugin: CompilerPlugin {
-  let providingMacros: [Macro.Type] = [
-    CoproductMacro.self
-  ]
+    let providingMacros: [Macro.Type] = [
+        CoproductMacro.self
+    ]
 }
