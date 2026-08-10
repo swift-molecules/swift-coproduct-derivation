@@ -1,6 +1,6 @@
 // Coproduct.Macro.swift
 
-import CoproductDerivation
+import Coproduct_Derivation_Core
 import Declaration_Derivation_Analysis
 import Declaration_Derivation_Diagnostics
 public import Declaration_Derivation_Model

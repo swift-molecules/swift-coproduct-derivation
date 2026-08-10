@@ -1,6 +1,6 @@
 // Determinism Tests.swift
 
-import CoproductDerivation
+import Coproduct_Derivation_Core
 import Declaration_Derivation_Analysis
 import Declaration_Derivation_Diagnostics
 import Declaration_Derivation_Model

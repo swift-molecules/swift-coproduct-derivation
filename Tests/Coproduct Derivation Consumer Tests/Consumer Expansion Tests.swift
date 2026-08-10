@@ -1,7 +1,7 @@
 // Consumer Expansion Tests.swift
 
-import CoproductDerivation
 import Coproduct_Derivation
+import Coproduct_Derivation_Core
 import Testing
 
 // MARK: - Consumer-integration control
