@@ -16,7 +16,7 @@ let package = Package(
         // MARK: - Coproduct derivation core (model, fold emitter, prism emitter)
         .library(
             name: "Coproduct Derivation",
-            targets: ["CoproductDerivation", "Coproduct Derivation"]
+            targets: ["Coproduct Derivation Core", "Coproduct Derivation"]
         ),
         .library(
             name: "Coproduct Derivation Macros",
@@ -43,7 +43,7 @@ let package = Package(
         .target(
             name: "Coproduct Derivation",
             dependencies: [
-                "CoproductDerivation",
+                "Coproduct Derivation Core",
                 "CoproductDerivationMacros",
             ]
         ),
@@ -52,7 +52,7 @@ let package = Package(
         // the shared declaration IR, the exhaustive fold emitter and the
         // optional prism emitter.
         .target(
-            name: "CoproductDerivation",
+            name: "Coproduct Derivation Core",
             dependencies: [
                 .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
@@ -62,7 +62,7 @@ let package = Package(
         .macro(
             name: "CoproductDerivationMacros",
             dependencies: [
-                "CoproductDerivation",
+                "Coproduct Derivation Core",
                 .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Analysis", package: "swift-declaration-derivation"),
@@ -83,14 +83,14 @@ let package = Package(
         .testTarget(
             name: "Coproduct Derivation Consumer Tests",
             dependencies: [
-                "CoproductDerivation",
+                "Coproduct Derivation Core",
                 "Coproduct Derivation",
             ]
         ),
         .testTarget(
             name: "Coproduct Derivation Tests",
             dependencies: [
-                "CoproductDerivation",
+                "Coproduct Derivation Core",
                 .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Analysis", package: "swift-declaration-derivation"),
@@ -102,7 +102,7 @@ let package = Package(
             name: "Coproduct Derivation Macros Tests",
             dependencies: [
                 "CoproductDerivationMacros",
-                "CoproductDerivation",
+                "Coproduct Derivation Core",
                 .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
                 .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),

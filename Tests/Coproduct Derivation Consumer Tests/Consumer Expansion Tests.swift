@@ -1,7 +1,7 @@
 // Consumer Expansion Tests.swift
 
 import Coproduct_Derivation
-import CoproductDerivation
+import Coproduct_Derivation_Core
 import Testing
 
 // MARK: - Consumer-integration control
@@ -13,13 +13,6 @@ import Testing
 // mapping itself through `macroSpecs:` — cannot detect an undeclared or
 // unresolvable @Coproduct.
 //
-// The fixtures are payload-free because the delivered
-// `Declaration.SwiftSyntaxAdapter` records no payload type reference for an
-// enumeration case, so `Coproduct.Derivation.Model` sees every alternative as
-// payload-free and both emitters render the payload-free shape. That is a
-// TX-D2 semantic gap, not a usability one; this control asserts the behaviour
-// that actually ships.
-
 @Coproduct
 private enum Direction {
     case north
@@ -30,6 +23,17 @@ private enum Direction {
 private enum Signal {
     case ready
     case failed
+}
+
+@Coproduct(prisms: true)
+private enum Request {
+    case failed(String)
+}
+
+@Coproduct(prisms: true)
+private enum Callback {
+    case callback(@Sendable () -> Void)
+    case idle
 }
 
 private let expectedProvenance =
@@ -57,6 +61,29 @@ extension Coproduct {
             #expect(Signal.ready.readyPrism != nil)
         }
 
+        /// Binding regression: generated payload-bearing members receive the
+        /// exact associated value supplied by the consumer.
+        @Test func `fold and prism preserve an associated value`() {
+            let request = Request.failed("offline")
+            #expect(request.fold(failed: { $0 }) == "offline")
+            #expect(request.failedPrism == "offline")
+        }
+
+        /// A consumer receives the function payload as an optional whole type,
+        /// rather than as a nonoptional function returning an optional result.
+        @Test func `function payload prism extracts the matching case only`() {
+            let callback: @Sendable () -> Void = {}
+            let value = Callback.callback(callback)
+            guard let extracted = value.callbackPrism else {
+                Issue.record("the matching callback case must extract its payload")
+                return
+            }
+            extracted()
+            if Callback.idle.callbackPrism != nil {
+                Issue.record("a nonmatching callback case must not extract a payload")
+            }
+        }
+
         /// Expansion without the argument derives no prisms; `Direction` has
         /// a fold and provenance only.
         @Test func `prisms are absent without the argument`() {
@@ -67,6 +94,8 @@ extension Coproduct {
         @Test func `expansions carry provenance`() {
             #expect(Direction.coproductDerivationProvenance == expectedProvenance)
             #expect(Signal.coproductDerivationProvenance == expectedProvenance)
+            #expect(Request.coproductDerivationProvenance == expectedProvenance)
+            #expect(Callback.coproductDerivationProvenance == expectedProvenance)
         }
     }
 }

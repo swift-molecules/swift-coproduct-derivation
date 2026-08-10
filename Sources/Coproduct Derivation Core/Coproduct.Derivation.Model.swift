@@ -1,7 +1,7 @@
 // Coproduct.Derivation.Model.swift
 
-public import DeclarationDerivationDiagnostics
-public import DeclarationDerivationModel
+public import Declaration_Derivation_Diagnostics
+public import Declaration_Derivation_Model
 
 /// Namespace for nominal coproduct derivation.
 ///
@@ -31,6 +31,7 @@ extension Coproduct.Derivation {
 
         /// One alternative of the coproduct.
         public struct Case: Hashable, Sendable {
+            /// The case's name.
             public let name: Declaration.Node.Name
             /// The normalized payload type, when the source declares one.
             public let payloadTypeReference: Declaration.Node.Member.TypeReference?
@@ -39,6 +40,7 @@ extension Coproduct.Derivation {
             /// The payload's default-value spelling, preserved verbatim.
             public let payloadDefaultValue: Declaration.Node.Member.DefaultValue?
 
+            /// Creates a case from its name and payload facts.
             public init(
                 name: Declaration.Node.Name,
                 payloadTypeReference: Declaration.Node.Member.TypeReference? = nil,
@@ -52,6 +54,7 @@ extension Coproduct.Derivation {
             }
         }
 
+        /// The coproduct type's name.
         public let name: Declaration.Node.Name
         /// Cases in declaration order.
         public let cases: [Case]
@@ -97,10 +100,14 @@ extension Coproduct {
     /// the receipt's pin exactly.
     public struct GenerationContract: Hashable, Sendable {
 
+        /// The revision of the coproduct generation contract itself.
         public let revision: Declaration.GenerationContract.Revision
+        /// The declaration IR schema version the contract generates under.
         public let schemaVersion: Declaration.IR.SchemaVersion
+        /// The exact package version pin of the generator.
         public let packageVersionPin: Declaration.GenerationContract.PackageVersionPin
 
+        /// Creates a contract from its revision, schema version and pin.
         public init(
             revision: Declaration.GenerationContract.Revision,
             schemaVersion: Declaration.IR.SchemaVersion,
@@ -115,29 +122,31 @@ extension Coproduct {
 
 extension Coproduct.GenerationContract {
 
-        /// Coproduct.GenerationContract.v1 — the contract this package emits
-        /// under at TX-D2.
-        public static let version1 = Coproduct.GenerationContract(
-            revision: Declaration.GenerationContract.Revision("1"),
-            schemaVersion: .version1,
-            packageVersionPin: Declaration.GenerationContract.PackageVersionPin(
-                "swift-primitives/swift-coproduct-derivation@main"
-            )
+    /// Coproduct.GenerationContract.v1 — the contract this package emits
+    /// under at TX-D2.
+    public static let version1 = Coproduct.GenerationContract(
+        revision: Declaration.GenerationContract.Revision("1"),
+        schemaVersion: .version1,
+        packageVersionPin: Declaration.GenerationContract.PackageVersionPin(
+            "swift-primitives/swift-coproduct-derivation@main"
         )
+    )
 
-        /// The file-name suffix that marks a rendered file as owned by the
-        /// coproduct generation contract. Anything without the suffix is
-        /// handwritten and outside the contract.
-        public static let generatedFileNameSuffix = "+CoproductDerivation.generated.swift"
+    /// The file-name suffix that marks a rendered file as owned by the
+    /// coproduct generation contract.
+    ///
+    /// Anything without the suffix is handwritten and outside the contract.
+    public static let generatedFileNameSuffix = "+CoproductDerivation.generated.swift"
 
-        /// Whether a file name identifies output owned by the coproduct
-        /// generation contract.
-        public func isGenerated(fileName: String) -> Bool {
-            fileName.hasSuffix(Self.generatedFileNameSuffix)
-        }
+    /// Whether a file name identifies output owned by the coproduct
+    /// generation contract.
+    public func isGenerated(fileName: String) -> Bool {
+        fileName.hasSuffix(Self.generatedFileNameSuffix)
+    }
 
-        /// The provenance record every generated expansion carries:
-        /// contract revision, IR schema version and package pin.
-        public var provenance: String {
-            "contract-revision=\(revision.text);ir-schema=\(schemaVersion.identifier);package-version-pin=\(packageVersionPin.text)"
-        }}
+    /// The provenance record every generated expansion carries:
+    /// contract revision, IR schema version and package pin.
+    public var provenance: String {
+        "contract-revision=\(revision.text);ir-schema=\(schemaVersion.identifier);package-version-pin=\(packageVersionPin.text)"
+    }
+}

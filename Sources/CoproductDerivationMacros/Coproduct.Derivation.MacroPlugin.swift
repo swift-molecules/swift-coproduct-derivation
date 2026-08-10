@@ -1,7 +1,7 @@
 // Coproduct.Derivation.MacroPlugin.swift
 
-import CoproductDerivation
-import DeclarationDerivationModel
+import Coproduct_Derivation_Core
+import Declaration_Derivation_Model
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 

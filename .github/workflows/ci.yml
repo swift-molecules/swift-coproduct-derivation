@@ -23,4 +23,5 @@ jobs:
     name: ci / matrix
     uses: swift-institute/.github/.github/workflows/swift-ci.yml@main
     with:
+      embedded-target: Coproduct Derivation Core
       lint-bundle: primitives

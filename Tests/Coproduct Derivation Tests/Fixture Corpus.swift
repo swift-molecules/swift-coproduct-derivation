@@ -1,6 +1,6 @@
 // Fixture Corpus.swift
 
-import DeclarationDerivationModel
+import Declaration_Derivation_Model
 import SwiftParser
 import SwiftSyntax
 
@@ -70,4 +70,5 @@ extension FixtureCorpus {
             fatalError("fixture does not parse to a declaration")
         }
         return declaration
-    }}
+    }
+}
