@@ -242,7 +242,10 @@ extension Coproduct.Macro {
         /// expansions; the expected sources are the API snapshot.
         @Test func `fixture corpus expands identically twice`() {
             for _ in 1...2 {
-                expectMacroExpansion(enumerationFixture, expandedSource: enumerationFixtureExpansion)
+                expectMacroExpansion(
+                    enumerationFixture,
+                    expandedSource: enumerationFixtureExpansion
+                )
                 expectMacroExpansion(zeroCaseFixture, expandedSource: zeroCaseFixtureExpansion)
                 expectMacroExpansion(prismFixture, expandedSource: prismFixtureExpansion)
                 expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
