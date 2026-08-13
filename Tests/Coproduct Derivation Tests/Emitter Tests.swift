@@ -23,14 +23,18 @@ extension Coproduct.Derivation.Emitter {
         }
 
         @Test func `zero-case enumeration derives the closed fold`() throws {
-            let members = emitter.memberDeclarations(for: try model(FixtureCorpus.zeroCaseEnumeration))
+            let members = emitter.memberDeclarations(
+                for: try model(FixtureCorpus.zeroCaseEnumeration)
+            )
             let fold = try #require(members.first)
             #expect(fold.contains("public func fold<Result>() -> Result {"))
             #expect(fold.contains("switch self {"))
         }
 
         @Test func `single-case enumeration derives the one-arm fold`() throws {
-            let members = emitter.memberDeclarations(for: try model(FixtureCorpus.singleCaseEnumeration))
+            let members = emitter.memberDeclarations(
+                for: try model(FixtureCorpus.singleCaseEnumeration)
+            )
             let fold = try #require(members.first)
             #expect(fold.contains("only: () -> Result"))
             #expect(fold.contains("case .only:"))
@@ -71,7 +75,9 @@ extension Coproduct.Derivation.Emitter {
         }
 
         @Test func `every expansion carries the contract provenance`() throws {
-            let members = emitter.memberDeclarations(for: try model(FixtureCorpus.singleCaseEnumeration))
+            let members = emitter.memberDeclarations(
+                for: try model(FixtureCorpus.singleCaseEnumeration)
+            )
             let provenance = try #require(members.last)
             #expect(provenance.contains(Coproduct.GenerationContract.version1.provenance))
             #expect(
@@ -85,7 +91,9 @@ extension Coproduct.Derivation.Emitter {
             #expect(contract.isGenerated(fileName: "Command+CoproductDerivation.generated.swift"))
             #expect(!contract.isGenerated(fileName: "Command.swift"))
             #expect(!contract.isGenerated(fileName: "Command+Handwritten.swift"))
-            #expect(!contract.isGenerated(fileName: "Command+DeclarationDerivation.generated.swift"))
+            #expect(
+                !contract.isGenerated(fileName: "Command+DeclarationDerivation.generated.swift")
+            )
         }
 
         @Test func `a structure is rejected with the stable diagnostic`() throws {
