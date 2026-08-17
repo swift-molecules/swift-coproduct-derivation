@@ -6,11 +6,11 @@ import PackageDescription
 let package = Package(
     name: "swift-coproduct-derivation",
     platforms: [
-        .macOS(.v26),
-        .iOS(.v26),
-        .tvOS(.v26),
-        .watchOS(.v26),
-        .visionOS(.v26)
+        .macOS("27"),
+        .iOS("27"),
+        .tvOS("27"),
+        .watchOS("27"),
+        .visionOS("27")
     ],
     products: [
         // MARK: - Coproduct derivation core (model, fold emitter, prism emitter)
