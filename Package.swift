@@ -1,4 +1,4 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import CompilerPluginSupport
 import PackageDescription
@@ -6,11 +6,11 @@ import PackageDescription
 let package = Package(
     name: "swift-coproduct-derivation",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27"),
-        .visionOS("27")
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         // MARK: - Coproduct derivation core (model, fold emitter, prism emitter)
@@ -54,8 +54,14 @@ let package = Package(
         .target(
             name: "Coproduct Derivation Core",
             dependencies: [
-                .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
+                .product(
+                    name: "Declaration Derivation Model",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Diagnostics",
+                    package: "swift-declaration-derivation"
+                ),
             ]
         ),
         // MARK: - Attached-macro front (@Coproduct; build-time only, excluded from Embedded)
@@ -63,10 +69,22 @@ let package = Package(
             name: "CoproductDerivationMacros",
             dependencies: [
                 "Coproduct Derivation Core",
-                .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Analysis", package: "swift-declaration-derivation"),
-                .product(name: "Declaration SwiftSyntax Adapter", package: "swift-declaration-derivation"),
+                .product(
+                    name: "Declaration Derivation Model",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Diagnostics",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Analysis",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration SwiftSyntax Adapter",
+                    package: "swift-declaration-derivation"
+                ),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
@@ -91,10 +109,22 @@ let package = Package(
             name: "Coproduct Derivation Tests",
             dependencies: [
                 "Coproduct Derivation Core",
-                .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Analysis", package: "swift-declaration-derivation"),
-                .product(name: "Declaration SwiftSyntax Adapter", package: "swift-declaration-derivation"),
+                .product(
+                    name: "Declaration Derivation Model",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Diagnostics",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Analysis",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration SwiftSyntax Adapter",
+                    package: "swift-declaration-derivation"
+                ),
                 .product(name: "SwiftParser", package: "swift-syntax"),
             ]
         ),
@@ -103,8 +133,14 @@ let package = Package(
             dependencies: [
                 "CoproductDerivationMacros",
                 "Coproduct Derivation Core",
-                .product(name: "Declaration Derivation Model", package: "swift-declaration-derivation"),
-                .product(name: "Declaration Derivation Diagnostics", package: "swift-declaration-derivation"),
+                .product(
+                    name: "Declaration Derivation Model",
+                    package: "swift-declaration-derivation"
+                ),
+                .product(
+                    name: "Declaration Derivation Diagnostics",
+                    package: "swift-declaration-derivation"
+                ),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxMacroExpansion", package: "swift-syntax"),
