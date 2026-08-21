@@ -1,5 +1,3 @@
-// Coproduct.Macro.swift
-
 import Coproduct_Derivation_Core
 import Declaration_Derivation_Analysis
 import Declaration_Derivation_Diagnostics
@@ -9,28 +7,15 @@ public import SwiftSyntax
 public import SwiftSyntaxMacros
 
 extension Coproduct {
-    /// The `@Coproduct` attached-macro front over the coproduct core.
-    ///
-    /// The macro is a thin adapter: it normalizes the attached declaration
-    /// through `Declaration.SwiftSyntaxAdapter`, validates the IR through
-    /// `Declaration.Derivation.Analyzer`, views it as a nominal coproduct
-    /// through `Coproduct.Derivation.Model` and renders members through
-    /// `Coproduct.Derivation.Emitter` — plus, when the attribute requests
-    /// `prisms: true`, through `Coproduct.Derivation.PrismEmitter`.
-    /// Expansion happens at build time in the consumer; the macro receives
-    /// the attached declaration only and performs no input or output of any
-    /// other kind. Every expansion carries the generation contract's
-    /// provenance (contract revision, IR schema version, package version
-    /// pin) as a generated member.
+
     public struct Macro: MemberMacro {
     }
 }
 
 extension Coproduct.Macro {
-    /// The generation contract this macro front emits under.
+
     public static let contract = Coproduct.GenerationContract.version1
 
-    /// Expands the attached declaration into its derived members.
     public static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
@@ -58,14 +43,6 @@ extension Coproduct.Macro {
         }
     }
 
-    /// Enriches the shared declaration IR with the single associated
-    /// value the coproduct model and emitters support.
-    ///
-    /// The shared SwiftSyntax adapter currently normalizes every enum
-    /// case as payload-free. Rebuilding only enumeration members here
-    /// keeps the workaround inside the macro boundary that has syntax
-    /// access, while all downstream analysis and emission continue to
-    /// consume the existing syntax-independent IR.
     private static func normalize(
         _ declaration: some DeclGroupSyntax,
         using adapter: Declaration.SwiftSyntaxAdapter
@@ -125,8 +102,6 @@ extension Coproduct.Macro {
         )
     }
 
-    /// Whether the attribute opts in to prism emission with
-    /// `@Coproduct(prisms: true)`.
     private static func emitsPrisms(_ node: AttributeSyntax) -> Bool {
         guard case .argumentList(let arguments) = node.arguments else {
             return false

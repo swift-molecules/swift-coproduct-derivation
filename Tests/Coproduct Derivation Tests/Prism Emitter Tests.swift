@@ -1,5 +1,3 @@
-// Prism Emitter Tests.swift
-
 import Coproduct_Derivation_Core
 import Declaration_Derivation_Diagnostics
 import Declaration_Derivation_Model

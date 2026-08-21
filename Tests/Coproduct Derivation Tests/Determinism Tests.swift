@@ -1,5 +1,3 @@
-// Determinism Tests.swift
-
 import Coproduct_Derivation_Core
 import Declaration_Derivation_Analysis
 import Declaration_Derivation_Diagnostics
@@ -9,8 +7,7 @@ import Testing
 
 extension Coproduct.Derivation.Model {
     @Suite struct Test {
-        /// Positive control: deriving the fixture corpus twice yields
-        /// byte-identical models, folds, prisms and provenance.
+
         @Test(
             arguments: [
                 FixtureCorpus.zeroCaseEnumeration,
@@ -54,8 +51,6 @@ extension Coproduct.Derivation.Model {
             )
         }
 
-        /// Negative control: a non-coproduct declaration fails with the same
-        /// stable diagnostic on every run.
         @Test func `a structure yields the stable diagnostic twice`() throws {
             let adapter = Declaration.SwiftSyntaxAdapter()
             let intermediateRepresentation = try adapter.intermediateRepresentation(

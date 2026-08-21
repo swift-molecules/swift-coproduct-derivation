@@ -1,5 +1,3 @@
-// Expansion Tests.swift
-
 import Coproduct_Derivation_Core
 import Declaration_Derivation_Diagnostics
 import Declaration_Derivation_Model
@@ -11,16 +9,10 @@ import Testing
 
 @testable import CoproductDerivationMacros
 
-// MARK: - Macro registry
-
 private let coproductMacros: [String: MacroSpec] = [
     "Coproduct": MacroSpec(type: Coproduct.Macro.self)
 ]
 
-// MARK: - Swift Testing adapter
-
-/// Bridges the generic macro-test support's framework-agnostic failure
-/// handler to Swift Testing issue recording.
 private func expectMacroExpansion(
     _ originalSource: String,
     expandedSource: String,
@@ -52,8 +44,6 @@ private func expectMacroExpansion(
         column: column
     )
 }
-
-// MARK: - Expansion fixtures (the expected sources are the API snapshot of the expanded interface)
 
 private let enumerationFixture = """
     @Coproduct
@@ -238,8 +228,7 @@ private let structureFixture = """
 
 extension Coproduct.Macro {
     @Suite struct Test {
-        /// Self-firing control: the fixture corpus expands twice with identical
-        /// expansions; the expected sources are the API snapshot.
+
         @Test func `fixture corpus expands identically twice`() {
             for _ in 1...2 {
                 expectMacroExpansion(
@@ -256,14 +245,10 @@ extension Coproduct.Macro {
             }
         }
 
-        /// Binding regression: the expansion must bind an associated value and
-        /// pass that exact value through both generated payload-bearing members.
         @Test func `associated value is bound by fold and prism expansions`() {
             expectMacroExpansion(payloadFixture, expandedSource: payloadFixtureExpansion)
         }
 
-        /// Precedence regression: the prism optionalizes the complete function
-        /// payload type, preserving its attribute and return type.
         @Test func `function payload prism groups the complete payload type`() {
             expectMacroExpansion(
                 functionPayloadFixture,
@@ -271,14 +256,10 @@ extension Coproduct.Macro {
             )
         }
 
-        /// Near-miss control: without `prisms: true` the expansion contains no
-        /// prism member, and the handwritten declaration body is untouched.
         @Test func `prism emission is opt-in`() {
             expectMacroExpansion(enumerationFixture, expandedSource: enumerationFixtureExpansion)
         }
 
-        /// Negative control: a non-coproduct declaration expands to nothing and
-        /// emits the stable diagnostic.
         @Test func `a structure yields the stable diagnostic`() {
             expectMacroExpansion(
                 structureFixture,

@@ -1,23 +1,12 @@
-// Coproduct.Derivation.Emitter.swift
-
 public import Declaration_Derivation_Diagnostics
 public import Declaration_Derivation_Model
 
 extension Coproduct.Derivation {
-    /// The deterministic emitter of the exhaustive nominal fold.
-    ///
-    /// Emission is a pure function of the coproduct model and the generation
-    /// contract: the same input renders byte-identically on every run. The
-    /// emitter derives `fold` — one closure parameter per case, labeled by
-    /// the case name in declaration order, payload-passing when the case
-    /// carries a normalized payload — plus the provenance member the
-    /// contract mandates. Handwritten declarations outside the contract are
-    /// never touched.
+
     public struct Emitter: Sendable {
-        /// The generation contract emission renders under.
+
         public let contract: Coproduct.GenerationContract
 
-        /// Creates an emitter for the given generation contract.
         public init(contract: Coproduct.GenerationContract) {
             self.contract = contract
         }
@@ -26,15 +15,11 @@ extension Coproduct.Derivation {
 
 extension Coproduct.Derivation.Emitter {
 
-    /// The derived member declarations for a coproduct model, in stable
-    /// order, each rendered as canonical Swift source.
     public func memberDeclarations(
         for model: Coproduct.Derivation.Model
     ) -> [String] {
         [fold(for: model), provenanceMember()]
     }
-
-    // MARK: - Derived members
 
     private func fold(for model: Coproduct.Derivation.Model) -> String {
         if model.cases.isEmpty {
