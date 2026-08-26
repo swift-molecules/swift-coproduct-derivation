@@ -26,7 +26,7 @@ private enum Callback {
 }
 
 private let expectedProvenance =
-    "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+    "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
 
 extension Coproduct {
     @Suite struct Test {

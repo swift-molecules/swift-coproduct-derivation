@@ -71,7 +71,7 @@ private let enumerationFixtureExpansion = """
         }
 
         public static var coproductDerivationProvenance: String {
-            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
         }
     }
     """
@@ -91,7 +91,7 @@ private let zeroCaseFixtureExpansion = """
         }
 
         public static var coproductDerivationProvenance: String {
-            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
         }
     }
     """
@@ -122,7 +122,7 @@ private let prismFixtureExpansion = """
         }
 
         public static var coproductDerivationProvenance: String {
-            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
         }
 
         public var onPrism: Void? {
@@ -162,7 +162,7 @@ private let payloadFixtureExpansion = """
         }
 
         public static var coproductDerivationProvenance: String {
-            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
         }
 
         public var failedPrism: (String)? {
@@ -200,7 +200,7 @@ private let functionPayloadFixtureExpansion = """
         }
 
         public static var coproductDerivationProvenance: String {
-            "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+            "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
         }
 
         public var callbackPrism: (@Sendable () -> Void)? {

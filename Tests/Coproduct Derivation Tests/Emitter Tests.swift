@@ -80,7 +80,7 @@ extension Coproduct.Derivation.Emitter {
             #expect(provenance.contains(Coproduct.GenerationContract.version1.provenance))
             #expect(
                 Coproduct.GenerationContract.version1.provenance
-                    == "contract-revision=1;ir-schema=v1;package-version-pin=swift-primitives/swift-coproduct-derivation@main"
+                    == "contract-revision=1;ir-schema=v1;package-version-pin=swift-molecules/swift-coproduct-derivation@main"
             )
         }
 
