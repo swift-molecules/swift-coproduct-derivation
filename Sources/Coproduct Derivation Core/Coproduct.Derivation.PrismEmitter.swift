@@ -1,5 +1,4 @@
-public import Declaration_Derivation_Diagnostics
-public import Declaration_Derivation_Model
+internal import Declaration_Derivation_Model
 
 extension Coproduct.Derivation {
 
