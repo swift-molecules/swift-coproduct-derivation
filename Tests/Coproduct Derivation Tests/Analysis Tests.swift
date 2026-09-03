@@ -18,7 +18,7 @@ func `analysis preserves payload syntax and finds semantic generic references`()
     let declaration = try #require(
         source.statements.first?.item.as(EnumDeclSyntax.self)
     )
-    let analysis = Analysis(declaration)
+    let analysis = Coproduct.Analysis(declaration)
     let parameter = try #require(analysis.genericParameter)
 
     #expect(analysis.access?.name.tokenKind == .keyword(.fileprivate))
